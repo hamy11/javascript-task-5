@@ -7,6 +7,7 @@
 getEmitter.isStar = true;
 module.exports = getEmitter;
 
+const a = "testsdfsdf";
 /**
  * Возвращает новый emitter
  * @returns {Object}
