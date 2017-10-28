@@ -6,6 +6,8 @@
  */
 getEmitter.isStar = true;
 module.exports = getEmitter;
+let contexts = new Set();
+let throughtStartNumber = 0;
 
 /**
  * Возвращает новый emitter
@@ -19,26 +21,44 @@ function getEmitter() {
          * @param {String} event
          * @param {Object} context
          * @param {Function} handler
+         * @returns {Object}
          */
         on: function (event, context, handler) {
-            console.info(event, context, handler);
+            contexts.add(context);
+            context[event] = handler.bind(context);
+
+            return this;
         },
 
         /**
          * Отписаться от события
          * @param {String} event
          * @param {Object} context
+         * @returns {Object}
          */
         off: function (event, context) {
-            console.info(event, context);
+            Object.keys(context)
+                .filter(property=>typeof(context[property]) === 'function' &&
+                    (property + '.').startsWith(event + '.'))
+                .forEach(x=> delete context[x]);
+
+            return this;
         },
 
         /**
          * Уведомить о событии
-         * @param {String} event
+         * @param {String} eventToEmit
+         * @returns {Object}
          */
-        emit: function (event) {
-            console.info(event);
+        emit: function (eventToEmit) {
+            let splitted = eventToEmit.split('.');
+            let events = splitted.reduceRight(function (prev, current, i) {
+                return prev.concat(splitted.slice(0, i + 1).join('.'));
+            }, []);
+            contexts.forEach(context =>
+                events.forEach(event => !context.hasOwnProperty(event) || context[event]()));
+
+            return this;
         },
 
         /**
@@ -48,9 +68,10 @@ function getEmitter() {
          * @param {Object} context
          * @param {Function} handler
          * @param {Number} times – сколько раз получить уведомление
+         * @returns {Object}
          */
         several: function (event, context, handler, times) {
-            console.info(event, context, handler, times);
+            return this.on(event, context, () => times-- > 0 ? handler.bind(context)() : null);
         },
 
         /**
@@ -60,9 +81,12 @@ function getEmitter() {
          * @param {Object} context
          * @param {Function} handler
          * @param {Number} frequency – как часто уведомлять
+         * @returns {Object}
          */
+
         through: function (event, context, handler, frequency) {
-            console.info(event, context, handler, frequency);
+            return this.on(event, context,
+                () => throughtStartNumber++ % frequency === 0 ? handler.bind(context)() : null);
         }
     };
 }
