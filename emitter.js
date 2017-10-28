@@ -6,7 +6,7 @@
  */
 getEmitter.isStar = true;
 module.exports = getEmitter;
-let contexts = new Set();
+
 let throughtStartNumber = 0;
 
 /**
@@ -24,10 +24,11 @@ function getEmitter() {
          * @returns {Object}
          */
         on: function (event, context, handler) {
+            let contexts = this.contexts || new Set();
             contexts.add(context);
             context[event] = handler.bind(context);
 
-            return this;
+            return Object.assign(this, { contexts: new Set(contexts, this.contexts) });
         },
 
         /**
@@ -55,7 +56,7 @@ function getEmitter() {
             let events = splitted.reduceRight(function (prev, current, i) {
                 return prev.concat(splitted.slice(0, i + 1).join('.'));
             }, []);
-            contexts.forEach(context =>
+            this.contexts.forEach(context =>
                 events.forEach(event => !context.hasOwnProperty(event) || context[event]()));
 
             return this;
