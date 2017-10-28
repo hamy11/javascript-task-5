@@ -7,6 +7,8 @@
 getEmitter.isStar = true;
 module.exports = getEmitter;
 
+const test = 0;
+
 /**
  * Возвращает новый emitter
  * @returns {Object}
