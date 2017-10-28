@@ -6,12 +6,7 @@
  */
 getEmitter.isStar = true;
 module.exports = getEmitter;
-
-<<<<<<< HEAD
-const test = 0;
-=======
 let throughtStartNumber = 0;
->>>>>>> dev
 
 /**
  * Возвращает новый emitter
