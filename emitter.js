@@ -38,8 +38,7 @@ function getEmitter() {
          */
         off: function (event, context) {
             Object.keys(context)
-                .filter(property => (property + '.').startsWith(event + '.') &&
-                    delete context[property]);
+                .filter(x => (x + '.').startsWith(event + '.') && delete context[x]);
 
             return this;
         },
@@ -73,7 +72,7 @@ function getEmitter() {
          */
         several: function (event, context, handler, times) {
             return times > 0
-                ? this.on(event, context, () => times-- > 0 ? handler.bind(context)() : null)
+                ? this.on(event, context, () => times-- > 0 && handler.bind(context)())
                 : this.on(event, context, handler);
         },
 
@@ -91,7 +90,7 @@ function getEmitter() {
 
             return frequency > 0
                 ? this.on(event, context,
-                    () => iterator++ % frequency ? handler.bind(context)() : null)
+                    () => iterator++ % frequency && handler.bind(context)())
                 : this.on(event, context, handler);
         }
     };
