@@ -57,7 +57,7 @@ function getEmitter() {
                 return tree.concat(splitted.slice(0, i + 1).join('.'));
             }, []);
             this.contexts.forEach(context => eventsTree.forEach(event =>
-                context.hasOwnProperty(event) && context[event].every(handler => handler())));
+                context.hasOwnProperty(event) && context[event].forEach(handler => handler())));
 
             return this;
         },
