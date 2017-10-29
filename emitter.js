@@ -23,7 +23,7 @@ function getEmitter() {
          * @returns {Object}
          */
         on: function (event, context, handler) {
-            if (event === undefined) {
+            if (event === undefined || context === undefined || handler === undefined) {
                 return this;
             }
             let contexts = this.contexts || new Set();
@@ -40,7 +40,7 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
-            if (event === undefined) {
+            if (event === undefined || context === undefined) {
                 return this;
             }
 
