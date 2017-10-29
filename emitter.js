@@ -39,7 +39,7 @@ function getEmitter() {
         off: function (event, context) {
             Object.keys(context)
                 .filter(property =>
-                    (event + '.').startsWith(property + '.') && delete context[event]);
+                    (property + '.').startsWith(event + '.') && delete context[event]);
 
             return this;
         },
