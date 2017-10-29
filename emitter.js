@@ -89,7 +89,7 @@ function getEmitter() {
             let throughtStartNumber = 0;
 
             return this.on(event, context,
-                () => throughtStartNumber++ % frequency === 0 ? handler.call(context) : null);
+                () => throughtStartNumber++ % frequency ? null : handler.call(context));
         }
     };
 }
