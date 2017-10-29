@@ -71,7 +71,7 @@ function getEmitter() {
          * @returns {Object}
          */
         several: function (event, context, handler, times) {
-            return this.on(event, context, () => times-- > 0 && handler.call(context));
+            return this.on(event, context, () => times-- > 0 ? handler.bind(context)() : null);
         },
 
         /**
@@ -85,10 +85,11 @@ function getEmitter() {
          */
 
         through: function (event, context, handler, frequency) {
+
             let throughtStartNumber = 0;
 
             return this.on(event, context,
-                () => throughtStartNumber++ % frequency === 0 && handler.call(context));
+                () => throughtStartNumber++ % frequency ? null : handler.bind(context)());
         }
     };
 }
