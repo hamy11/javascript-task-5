@@ -71,7 +71,9 @@ function getEmitter() {
          * @returns {Object}
          */
         several: function (event, context, handler, times) {
-            return this.on(event, context, () => times-- > 0 ? handler.bind(context)() : handler);
+            return times > 0
+                ? this.on(event, context, () => times-- > 0 && handler.bind(context)())
+                : this.on(event, context, handler);
         },
 
         /**
@@ -83,13 +85,12 @@ function getEmitter() {
          * @param {Number} frequency – как часто уведомлять
          * @returns {Object}
          */
-
         through: function (event, context, handler, frequency) {
+            let iterator = 1;
 
-            let throughtStartNumber = 0;
-
-            return this.on(event, context,
-                () => throughtStartNumber++ % frequency ? null : handler.bind(context)());
+            return frequency > 0
+                ? this.on(event, context, () => iterator++ % frequency && handler.bind(context)())
+                : this.on(event, context, handler);
         }
     };
 }
