@@ -38,8 +38,9 @@ function getEmitter() {
          */
         off: function (event, context) {
             Object.keys(context)
-                .filter(property =>
-                    (property + '.').startsWith(event + '.') && delete context[event]);
+                .filter(property=>typeof (context[property]) === 'function' &&
+                    (property + '.').startsWith(event + '.'))
+                .forEach(x=> delete context[x]);
 
             return this;
         },
@@ -55,7 +56,7 @@ function getEmitter() {
                 return prev.concat(splitted.slice(0, i + 1).join('.'));
             }, []);
             this.contexts.forEach(context =>
-                events.forEach(event => context.hasOwnProperty(event) && context[event]()));
+                events.forEach(event => !context.hasOwnProperty(event) || context[event]()));
 
             return this;
         },
