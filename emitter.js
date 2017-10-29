@@ -6,7 +6,6 @@
  */
 getEmitter.isStar = true;
 module.exports = getEmitter;
-let throughtStartNumber = 0;
 
 /**
  * Возвращает новый emitter
@@ -86,6 +85,9 @@ function getEmitter() {
          */
 
         through: function (event, context, handler, frequency) {
+
+            let throughtStartNumber = 0;
+
             return this.on(event, context,
                 () => throughtStartNumber++ % frequency === 0 ? handler.bind(context)() : null);
         }
