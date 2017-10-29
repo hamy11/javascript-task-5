@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализованы методы several и through
  */
-getEmitter.isStar = false;
+getEmitter.isStar = true;
 module.exports = getEmitter;
 let throughtStartNumber = 0;
 
@@ -27,7 +27,7 @@ function getEmitter() {
             contexts.add(context);
             context[event] = handler.bind(context);
 
-            return Object.assign(this, { contexts: new Set(contexts, this.contexts) });
+            return Object.assign(this, { contexts });
         },
 
         /**
@@ -38,9 +38,8 @@ function getEmitter() {
          */
         off: function (event, context) {
             Object.keys(context)
-                .filter(property=>typeof(context[property]) === 'function' &&
-                    (property + '.').startsWith(event + '.'))
-                .forEach(x=> delete context[x]);
+                .filter(property =>
+                    (event + '.').startsWith(property + '.') && delete context[event]);
 
             return this;
         },
@@ -56,7 +55,7 @@ function getEmitter() {
                 return prev.concat(splitted.slice(0, i + 1).join('.'));
             }, []);
             this.contexts.forEach(context =>
-                events.forEach(event => !context.hasOwnProperty(event) || context[event]()));
+                events.forEach(event => context.hasOwnProperty(event) && context[event]()));
 
             return this;
         },
