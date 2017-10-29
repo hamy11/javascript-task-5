@@ -72,7 +72,7 @@ function getEmitter() {
          */
         several: function (event, context, handler, times) {
             return times > 0
-                ? this.on(event, context, () => times-- > 0 && handler.bind(context)())
+                ? this.on(event, context, () => times-- > 0 ? handler.bind(context)() : null)
                 : this.on(event, context, handler);
         },
 
@@ -89,7 +89,8 @@ function getEmitter() {
             let iterator = 1;
 
             return frequency > 0
-                ? this.on(event, context, () => iterator++ % frequency && handler.bind(context)())
+                ? this.on(event, context,
+                    () => iterator++ % frequency ? handler.bind(context)() : null)
                 : this.on(event, context, handler);
         }
     };
