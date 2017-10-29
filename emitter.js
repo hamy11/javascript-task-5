@@ -23,6 +23,9 @@ function getEmitter() {
          * @returns {Object}
          */
         on: function (event, context, handler) {
+            if (event === undefined) {
+                return this;
+            }
             let contexts = this.contexts || new Set();
             contexts.add(context);
             context[event] = handler.bind(context);
@@ -61,6 +64,10 @@ function getEmitter() {
          * @returns {Object}
          */
         emit: function (eventToEmit) {
+            if (eventToEmit === undefined) {
+                return this;
+            }
+
             let splitted = eventToEmit.split('.');
             let events = splitted.reduceRight(function (prev, current, i) {
                 return prev.concat(splitted.slice(0, i + 1).join('.'));
