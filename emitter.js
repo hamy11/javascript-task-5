@@ -38,9 +38,8 @@ function getEmitter() {
          */
         off: function (event, context) {
             Object.keys(context)
-                .filter(property => /* typeof(context[property]) === Object && */
-                    (property + '.').startsWith(event + '.'))
-                .forEach(x => delete context[x]);
+                .filter(property => (property + '.').startsWith(event + '.') &&
+                    delete context[property]);
 
             return this;
         },
@@ -55,8 +54,10 @@ function getEmitter() {
             let eventsTree = splitted.reduceRight(function (tree, current, i) {
                 return tree.concat(splitted.slice(0, i + 1).join('.'));
             }, []);
-            this.contexts.forEach(context => eventsTree.forEach(event =>
-                context.hasOwnProperty(event) && context[event].forEach(handler => handler())));
+            this.contexts.forEach(context => eventsTree.forEach(
+                event => context.hasOwnProperty(event) &&
+                context[event].forEach(handler => typeof(handler) === 'function' && handler()))
+            );
 
             return this;
         },
