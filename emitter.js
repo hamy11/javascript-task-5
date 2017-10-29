@@ -37,6 +37,10 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
+            if (event === undefined) {
+                return this;
+            }
+
             if (event.indexOf('.') > 0) {
                 delete context[event];
 
