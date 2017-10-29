@@ -62,7 +62,7 @@ function getEmitter() {
                 return prev.concat(splitted.slice(0, i + 1).join('.'));
             }, []);
             this.contexts.forEach(context =>
-                events.forEach(event => !context.hasOwnProperty(event) || context[event]()));
+                events.forEach(event => context.hasOwnProperty(event) && context[event]()));
 
             return this;
         },
