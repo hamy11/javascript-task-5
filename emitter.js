@@ -37,10 +37,16 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
+            if (event.indexOf('.') > 0) {
+                delete context[event];
+
+                return this;
+            }
+
             Object.keys(context)
-                .filter(property=>typeof (context[property]) === 'function' &&
+                .filter(property => typeof (context[property]) === 'function' &&
                     (property + '.').startsWith(event + '.'))
-                .forEach(x=> delete context[x]);
+                .forEach(x => delete context[x]);
 
             return this;
         },
