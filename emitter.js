@@ -27,8 +27,9 @@ function getEmitter() {
                 return this;
             }
             let contexts = this.contexts || new Set();
+            context[event] = context[event] || [];
+            context[event].push(handler.bind(context));
             contexts.add(context);
-            context[event] = handler.bind(context);
 
             return Object.assign(this, { contexts });
         },
@@ -51,7 +52,7 @@ function getEmitter() {
             }
 
             Object.keys(context)
-                .filter(property => (typeof context[property] === 'function') &&
+                .filter(property => /* (typeof context[property] === 'function') &&*/
                     (property + '.').startsWith(event + '.'))
                 .forEach(x => delete context[x]);
 
@@ -69,11 +70,11 @@ function getEmitter() {
             }
 
             let splitted = eventToEmit.split('.');
-            let events = splitted.reduceRight(function (prev, current, i) {
-                return prev.concat(splitted.slice(0, i + 1).join('.'));
+            let eventsTree = splitted.reduceRight(function (tree, current, i) {
+                return tree.concat(splitted.slice(0, i + 1).join('.'));
             }, []);
-            this.contexts.forEach(context =>
-                events.forEach(event => context.hasOwnProperty(event) && context[event]()));
+            this.contexts.forEach(context => eventsTree.forEach(event =>
+                context.hasOwnProperty(event) && context[event].every(handler => handler())));
 
             return this;
         },
@@ -88,7 +89,7 @@ function getEmitter() {
          * @returns {Object}
          */
         several: function (event, context, handler, times) {
-            return this.on(event, context, () => times-- > 0 ? handler.bind(context)() : null);
+            return this.on(event, context, () => times-- > 0 && handler.bind(context)());
         },
 
         /**
@@ -103,7 +104,7 @@ function getEmitter() {
 
         through: function (event, context, handler, frequency) {
             return this.on(event, context,
-                () => throughtStartNumber++ % frequency === 0 ? handler.bind(context)() : null);
+                () => throughtStartNumber++ % frequency === 0 && handler.bind(context)());
         }
     };
 }
