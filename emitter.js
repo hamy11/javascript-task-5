@@ -23,9 +23,6 @@ function getEmitter() {
          * @returns {Object}
          */
         on: function (event, context, handler) {
-            if (event === undefined || context === undefined || handler === undefined) {
-                return this;
-            }
             let contexts = this.contexts || new Set();
             context[event] = context[event] || [];
             context[event].push(handler.bind(context));
@@ -41,18 +38,8 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
-            if (event === undefined || context === undefined) {
-                return this;
-            }
-
-            if (event.indexOf('.') > 0) {
-                delete context[event];
-
-                return this;
-            }
-
             Object.keys(context)
-                .filter(property => /* (typeof context[property] === 'function') &&*/
+                .filter(property => /* typeof(context[property]) === Object && */
                     (property + '.').startsWith(event + '.'))
                 .forEach(x => delete context[x]);
 
@@ -65,10 +52,6 @@ function getEmitter() {
          * @returns {Object}
          */
         emit: function (eventToEmit) {
-            if (eventToEmit === undefined) {
-                return this;
-            }
-
             let splitted = eventToEmit.split('.');
             let eventsTree = splitted.reduceRight(function (tree, current, i) {
                 return tree.concat(splitted.slice(0, i + 1).join('.'));
