@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализованы методы several и through
  */
-getEmitter.isStar = false;
+getEmitter.isStar = true;
 module.exports = getEmitter;
 let throughtStartNumber = 0;
 
@@ -72,7 +72,7 @@ function getEmitter() {
          * @returns {Object}
          */
         several: function (event, context, handler, times) {
-            return this.on(event, context, () => times-- > 0 && handler.bind(context)());
+            return this.on(event, context, () => times-- > 0 ? handler.bind(context)() : null);
         },
 
         /**
@@ -87,7 +87,7 @@ function getEmitter() {
 
         through: function (event, context, handler, frequency) {
             return this.on(event, context,
-                () => throughtStartNumber++ % frequency === 0 && handler.bind(context)());
+                () => throughtStartNumber++ % frequency === 0 ? handler.bind(context)() : null);
         }
     };
 }
