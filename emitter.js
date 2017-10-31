@@ -78,6 +78,10 @@ function getEmitter() {
          * @returns {Object}
          */
         several: function (event, context, handler, times) {
+            if (!context) {
+                return this;
+            }
+
             return times > 0
                 ? this.on(event, context, () => times-- > 0 && handler.call(context))
                 : this.on(event, context, handler);
@@ -93,6 +97,9 @@ function getEmitter() {
          * @returns {Object}
          */
         through: function (event, context, handler, frequency) {
+            if (!context) {
+                return this;
+            }
             let iterator = 1;
 
             return frequency > 0
