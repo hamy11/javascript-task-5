@@ -22,7 +22,7 @@ function getEmitter() {
          * @returns {Object}
          */
         on: function (event, context, handler) {
-            if (!context) {
+            if (!context || !event || !handler) {
                 return this;
             }
 
@@ -41,7 +41,7 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
-            if (!context) {
+            if (!context || !event) {
                 return this;
             }
             Object.keys(context)
@@ -78,7 +78,7 @@ function getEmitter() {
          * @returns {Object}
          */
         several: function (event, context, handler, times) {
-            if (!context) {
+            if (!context || !event || !handler) {
                 return this;
             }
 
@@ -97,7 +97,7 @@ function getEmitter() {
          * @returns {Object}
          */
         through: function (event, context, handler, frequency) {
-            if (!context) {
+            if (!context || !event || !handler) {
                 return this;
             }
             let iterator = 1;
