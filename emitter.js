@@ -84,7 +84,13 @@ function getEmitter() {
                 return this;
             }
 
-            return this.on(event, context, () => times-- >= 0 && handler.call(context));
+            this.on(event, context, () => {
+                if (times-- > 0) {
+                    handler.call(context);
+                }
+            });
+
+            return this;
         },
 
         /**
@@ -100,9 +106,14 @@ function getEmitter() {
             if (!context || !event || !handler) {
                 return this;
             }
-            let iterator = 1;
+            let iterator = 0;
+            this.on(event, context, () => {
+                if (iterator++ % frequency === 0) {
+                    handler.call(context);
+                }
+            });
 
-            return this.on(event, context, () => iterator++ % frequency && handler.call(context));
+            return this;
         }
     };
 }
