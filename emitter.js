@@ -25,7 +25,6 @@ function getEmitter() {
             if (!context || !event || !handler) {
                 return this;
             }
-
             let contexts = this.contexts || new Set();
             context[event] = context[event] || [];
             context[event].push(handler.bind(context));
@@ -65,7 +64,7 @@ function getEmitter() {
             }, []);
             this.contexts.forEach(context => eventsTree.forEach(
                 event => context.hasOwnProperty(event) &&
-                context[event].forEach(handler => typeof handler === 'function' && handler()))
+                context[event].forEach(handler => handler()))
             );
 
             return this;
@@ -85,9 +84,7 @@ function getEmitter() {
                 return this;
             }
 
-            return times > 0
-                ? this.on(event, context, () => times-- > 0 && handler.call(context))
-                : this.on(event, context, handler);
+            return this.on(event, context, () => times-- > 0 && handler.call(context));
         },
 
         /**
@@ -105,10 +102,7 @@ function getEmitter() {
             }
             let iterator = 1;
 
-            return frequency > 0
-                ? this.on(event, context,
-                    () => iterator++ % frequency && handler.call(context))
-                : this.on(event, context, handler);
+            return this.on(event, context, () => iterator++ % frequency && handler.call(context));
         }
     };
 }
