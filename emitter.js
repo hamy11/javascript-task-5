@@ -22,6 +22,10 @@ function getEmitter() {
          * @returns {Object}
          */
         on: function (event, context, handler) {
+            if (!context) {
+                return this;
+            }
+
             let contexts = this.contexts || new Set();
             context[event] = context[event] || [];
             context[event].push(handler.bind(context));
@@ -37,6 +41,9 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
+            if (!context) {
+                return this;
+            }
             Object.keys(context)
                 .filter(x => (x + '.').startsWith(event + '.') && delete context[x]);
 
@@ -55,7 +62,7 @@ function getEmitter() {
             }, []);
             this.contexts.forEach(context => eventsTree.forEach(
                 event => context.hasOwnProperty(event) &&
-                context[event].forEach(handler => typeof(handler) === 'function' && handler()))
+                context[event].forEach(handler => typeof handler === 'function' && handler()))
             );
 
             return this;
@@ -72,7 +79,7 @@ function getEmitter() {
          */
         several: function (event, context, handler, times) {
             return times > 0
-                ? this.on(event, context, () => times-- > 0 && handler.bind(context)())
+                ? this.on(event, context, () => times-- > 0 && handler.call(context))
                 : this.on(event, context, handler);
         },
 
@@ -90,7 +97,7 @@ function getEmitter() {
 
             return frequency > 0
                 ? this.on(event, context,
-                    () => iterator++ % frequency && handler.bind(context)())
+                    () => iterator++ % frequency && handler.call(context))
                 : this.on(event, context, handler);
         }
     };
