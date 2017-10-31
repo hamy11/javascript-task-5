@@ -84,7 +84,7 @@ function getEmitter() {
                 return this;
             }
 
-            return this.on(event, context, () => times-- > 0 && handler.call(context));
+            return this.on(event, context, () => times-- >= 0 && handler.call(context));
         },
 
         /**
