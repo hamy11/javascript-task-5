@@ -56,6 +56,9 @@ function getEmitter() {
          * @returns {Object}
          */
         emit: function (eventToEmit) {
+            if (!eventToEmit) {
+                return this;
+            }
             let splitted = eventToEmit.split('.');
             let eventsTree = splitted.reduceRight(function (tree, current, i) {
                 return tree.concat(splitted.slice(0, i + 1).join('.'));
