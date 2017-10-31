@@ -64,7 +64,7 @@ function getEmitter() {
             }, []);
             this.contexts.forEach(context => eventsTree.forEach(
                 event => context.hasOwnProperty(event) &&
-                context[event].forEach(handler => handler()))
+                context[event].forEach(handler => handler.call(context)))
             );
 
             return this;
