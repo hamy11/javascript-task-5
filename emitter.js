@@ -24,8 +24,6 @@ function getEmitter() {
          * @returns {Object}
          */
         on: function (event, context, handler) {
-            // let contexts = this.contexts || new Set();
-
             context = context || this;
             context[event] = context[event] || [];
             context[event].push(handler.bind(context));
@@ -41,9 +39,6 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
-            if (!context || !event) {
-                return this;
-            }
             Object.keys(context)
                 .filter(x => (x + '.').startsWith(event + '.') && delete context[x]);
 
@@ -99,13 +94,8 @@ function getEmitter() {
          */
         through: function (event, context, handler, frequency) {
             let iterator = 0;
-            this.on(event, context, () => {
-                if (iterator++ % frequency === 0) {
-                    handler.call(context);
-                }
-            });
 
-            return this;
+            return this.on(event, context, () => iterator++ % frequency === 0 && handler.call(context));
         }
     };
 }
