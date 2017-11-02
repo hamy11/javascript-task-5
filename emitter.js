@@ -55,9 +55,9 @@ function getEmitter() {
             let eventsTree = splitted.reduceRight(function (tree, current, i) {
                 return tree.concat(splitted.slice(0, i + 1).join('.'));
             }, []);
-            this.contexts.forEach(context => eventsTree.forEach(
-                event => context.hasOwnProperty(event) &&
-                context[event].forEach(func => func.call(context)))
+            this.contexts.forEach(context => eventsTree
+                .forEach(event => context.hasOwnProperty(event) && context[event]
+                    .forEach(func => func.call(context)))
             );
 
             return this;
@@ -73,14 +73,7 @@ function getEmitter() {
          * @returns {Object}
          */
         several: function (event, context, handler, times) {
-
-            this.on(event, context, () => {
-                if (times-- > 0) {
-                    handler.call(context);
-                }
-            });
-
-            return this;
+            return this.on(event, context, () => times-- >= 0 && handler.call(context));
         },
 
         /**
