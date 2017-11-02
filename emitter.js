@@ -12,6 +12,8 @@ module.exports = getEmitter;
  * @returns {Object}
  */
 function getEmitter() {
+    let contexts = new Set();
+
     return {
 
         /**
@@ -22,10 +24,9 @@ function getEmitter() {
          * @returns {Object}
          */
         on: function (event, context, handler) {
-            if (!context || !event || !handler) {
-                return this;
-            }
-            let contexts = this.contexts || new Set();
+            // let contexts = this.contexts || new Set();
+
+            context = context || this;
             context[event] = context[event] || [];
             context[event].push(handler.bind(context));
             contexts.add(context);
@@ -55,16 +56,13 @@ function getEmitter() {
          * @returns {Object}
          */
         emit: function (eventToEmit) {
-            if (!eventToEmit) {
-                return this;
-            }
             let splitted = eventToEmit.split('.');
             let eventsTree = splitted.reduceRight(function (tree, current, i) {
                 return tree.concat(splitted.slice(0, i + 1).join('.'));
             }, []);
             this.contexts.forEach(context => eventsTree.forEach(
                 event => context.hasOwnProperty(event) &&
-                context[event].forEach(handler => handler.call(context)))
+                context[event].forEach(func => func.call(context)))
             );
 
             return this;
@@ -80,9 +78,6 @@ function getEmitter() {
          * @returns {Object}
          */
         several: function (event, context, handler, times) {
-            if (!context || !event || !handler) {
-                return this;
-            }
 
             this.on(event, context, () => {
                 if (times-- > 0) {
@@ -103,9 +98,6 @@ function getEmitter() {
          * @returns {Object}
          */
         through: function (event, context, handler, frequency) {
-            if (!context || !event || !handler) {
-                return this;
-            }
             let iterator = 0;
             this.on(event, context, () => {
                 if (iterator++ % frequency === 0) {
