@@ -1,6 +1,18 @@
 'use strict';
 
 /**
+ * Возвращает множество пространств события
+ * @param {String} eventNamespase
+ * @returns {Array}
+ */
+function getNamespaces(eventNamespase) {
+    let splitted = eventNamespase.split('.');
+
+    return splitted
+        .reduceRight((tree, current, i) => tree.concat(splitted.slice(0, i + 1).join('.')), []);
+}
+
+/**
  * Сделано задание на звездочку
  * Реализованы методы several и through
  */
@@ -29,7 +41,7 @@ function getEmitter() {
             context[event].push(handler.bind(context));
             contexts.add(context);
 
-            return Object.assign(this, { contexts });
+            return this;
         },
 
         /**
@@ -39,8 +51,8 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
-            Object.keys(context)
-                .filter(x => (x + '.').startsWith(event + '.') && delete context[x]);
+            Object.keys(context).filter(x => (x + '.').startsWith(event + '.') &&
+                delete context[x]);
 
             return this;
         },
@@ -51,11 +63,7 @@ function getEmitter() {
          * @returns {Object}
          */
         emit: function (eventToEmit) {
-            let splitted = eventToEmit.split('.');
-            let eventsTree = splitted.reduceRight(function (tree, current, i) {
-                return tree.concat(splitted.slice(0, i + 1).join('.'));
-            }, []);
-            this.contexts.forEach(context => eventsTree
+            contexts.forEach(context => getNamespaces(eventToEmit)
                 .forEach(event => context.hasOwnProperty(event) && context[event]
                     .forEach(func => func.call(context)))
             );
