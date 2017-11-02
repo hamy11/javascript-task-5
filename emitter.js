@@ -95,7 +95,8 @@ function getEmitter() {
         through: function (event, context, handler, frequency) {
             let iterator = 0;
 
-            return this.on(event, context, () => iterator++ % frequency === 0 && handler.call(context));
+            return this.on(event, context,
+                () => iterator++ % frequency === 0 && handler.call(context));
         }
     };
 }
